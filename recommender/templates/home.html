@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>Fashion Recommendation | Home</title>
+    <link rel="stylesheet" href="{% static 'css/style1.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/home.js' %}"></script>
+</head>
+
+<body>
+    <div class="nav">
+        <div class="nav-container">
+            <div class="nav-left">
+                <h2><i class="fas fa-tshirt"></i> Fashion Recommender</h2>
+            </div>
+            {% if user.is_authenticated %}
+                <div class="nav-right">
+                <div class="user-menu">
+                    <div class="user-welcome">
+                        <div class="user-icon" onclick="toggleDropdown()">
+                            {% if user.profile.profile_picture %}
+                                <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" class="profile-picture">
+                            {% else %}
+                                <div class="profile-picture-placeholder">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu">
+                        <a href="{% url 'profile' %}" class="dropdown-item">
+                            <i class="fas fa-user-circle"></i> My Profile
+                        </a>
+                        <a href="{% url 'profile' %}#favourites" class="dropdown-item">
+                            <i class="fas fa-heart"></i> Favorites
+                        </a>
+                        <a href="{% url 'profile' %}#history" class="dropdown-item">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                        <a href="{% url 'settings' %}" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <a href="{% url 'logout' %}" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="auth-links">
+                    <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Find Your Perfect Style</h1>
+        <p class="subtitle">Discover fashion recommendations tailored just for you</p>
+
+        <div class="button-group">
+            <button onclick="showForm('image')"><i class="fas fa-camera"></i> Search by Image</button>
+            <button onclick="showForm('text')"><i class="fas fa-search"></i> Search by Text</button>
+        </div>
+
+        <div id="image-form" class="form-section">
+            <h3>Upload an Image</h3>
+            <p>Upload a fashion item to find similar styles</p>
+            <form action="{% url 'search_by_image' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="file-upload">
+                    <input type="file" name="image" id="image-upload" required>
+                    <label for="image-upload"><i class="fas fa-cloud-upload-alt"></i> Choose File</label>
+                </div>
+                <div class="file-display-container">
+                    <div class="selected-file"  id="selected-file">
+                        <div class="file-info">
+                            <i class="fas fa-file-image"></i>
+                            <p id="file-name-display"></p>
+                        </div>
+                        <div class="file-actions">
+                            <button type="button" class="remove-file" title="Remove file">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit"><i class="fas fa-search"></i> Find Similar Styles</button>
+            </form>
+        </div>
+
+        <div id="text-form" class="form-section">
+            <h3>Describe Your Style</h3>
+            <p>Tell us what you're looking for</p>
+            <form action="{% url 'search_by_text' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" name="text" placeholder="e.g., casual summer dress, formal suit..." required>
+                <button type="submit"><i class="fas fa-search"></i> Find Matches</button>
+            </form>
+        </div>
+
+        <div class="trending">
+            <h2>Trending Styles</h2>
+            <ul class="product-list">
+                <li class="product-item">
+                    <form method="POST" action="{% url 'trending_image_search' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="image_name" value="summer-dress.jpg">
+                        <button type="submit" class="trending-button">
+                            <img src="{% static 'trending/summer-dress.jpg' %}" alt="Summer Dress">
+                            <h4>Summer Dress</h4>
+                        </button>
+                    </form>
+                </li>
+                <li class="product-item">
+                    <form method="POST" action="{% url 'trending_image_search' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="image_name" value="denim.jpg">
+                        <button type="submit" class="trending-button">
+                            <img src="{% static 'trending/denim.jpg' %}" alt="Denim">
+                            <h4>Denim</h4>
+                        </button>
+                    </form>
+                </li>
+                <li class="product-item">
+                    <form method="POST" action="{% url 'trending_image_search' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="image_name" value="formal.jpg">
+                        <button type="submit" class="trending-button">
+                            <img src="{% static 'trending/formal.jpg' %}" alt="Formal">
+                            <h4>Formal</h4>
+                        </button>
+                    </form>
+                </li>
+                <li class="product-item">
+                    <form method="POST" action="{% url 'trending_image_search' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="image_name" value="saree.jpg">
+                        <button type="submit" class="trending-button">
+                            <img src="{% static 'trending/saree.jpg' %}" alt="Saree">
+                            <h4>Saree</h4>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-bolt"></i>
+                <h4>Instant Results</h4>
+                <p>Get recommendations in seconds</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-palette"></i>
+                <h4>Style Matching</h4>
+                <p>Find items that match your taste</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-shopping-bag"></i>
+                <h4>Curated Selection</h4>
+                <p>Discover quality fashion options</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Fashion Recommender. All rights reserved.</p>
+    </footer>
+    
+</body>
+</html>

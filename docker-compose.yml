@@ -1,0 +1,16 @@
+version: '3.10'
+
+services:
+  web:
+    image: fashion-app:latest
+    container_name: fashion-reco
+    volumes:
+      - .:/app
+      - ./media:/app/media
+      - ./C:\Users\admin\Desktop\fashion_reco\fashion_recommendation\db.sqlite3:/app/db.sqlite3
+    ports:
+      - "8000:8000"
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1

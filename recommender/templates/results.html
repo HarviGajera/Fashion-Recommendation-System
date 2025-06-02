@@ -1,0 +1,136 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>Fashion Recommendations | Results</title>
+    <link rel="stylesheet" href="{% static 'css/style1.css' %}">
+    <link rel="stylesheet" href="{% static 'css/results.css' %}">
+    <link rel="stylesheet" href="{% static 'css/favorites.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <script src="{% static "js/script.js" %}"></script>
+    <script src="{% static "js/favorites.js" %}"></script>
+    <script src="{% static "js/results.js" %}"></script>
+</head>
+
+<body>
+    <div class="nav">
+        <div class="nav-container">
+            <div class="nav-left">
+                <h2><i class="fas fa-t-shirt"></i> Fashion Recommender</h2>
+            </div>
+            {% if user.is_authenticated %}
+            <div class="nav-right">
+                <div class="user-menu">
+                    <div class="user-welcome">
+                        <div class="user-icon" onclick="toggleDropdown()">
+                            {% if user.profile.profile_picture %}
+                                <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" class="profile-picture">
+                            {% else %}
+                                <div class="profile-picture-placeholder">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu">
+                        <a href="{% url 'profile' %}" class="dropdown-item">
+                            <i class="fas fa-user-circle"></i> My Profile
+                        </a>
+                        <a href="{% url 'profile' %}#favorites" class="dropdown-item">
+                            <i class="fas fa-heart"></i> Favorites
+                        </a>
+                        <a href="{% url 'profile' %}#history" class="dropdown-item">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                        <a href="{% url 'settings' %}" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <a href="{% url 'logout' %}" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="auth-links">
+                    <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <h1>Unleash Your Fashion</h1>
+
+        {% if request.session.search_image_url %}
+            <div class="search-input-display">
+                <div class="search-label">Your Searched Image:</div>
+                {% if request.session.search_image_url == 'used_image' %}
+                    <div class="no-image-available">Image search used</div>
+                {% else %}
+                    <img src="{{ request.session.search_image_url }}" alt="Searched Image">
+                {% endif %}
+            </div>
+        {% elif search_term %}
+            <div class="search-input-display horizontal-search">
+                <span class="search-label">Your Search:</span>
+                <div class="search-input-text">
+                    "{{ search_term }}"
+                </div>
+            </div>
+        {% endif %}
+
+        <p class="subtitle">We found these items that match your preferences</p>
+
+        {% if error_message %}
+            <div class="error">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>{{ error_message }}</p>
+            </div>
+            <div class="back-button">
+                <a href="{% url 'home' %}"><i class="fas fa-arrow-left"></i> Back to Home</a>
+            </div>
+        {% else %}
+        <div class="results-container">
+            <ul class="product-list">
+                {% for product in products %}
+                    <li class="product-item" data-product-id="{{ product.id }}">
+                        <img src="{{ product.image.url }}" alt="{{ product.product_name }}">
+                        <h3>{{ product.product_name }}</h3>
+                        <div class="product-rating">
+                            {{ product.rating|render_stars|safe }}
+                        </div>
+                        {% if user.is_authenticated %}
+                            <button class="add-to-favorites {% if product.id in favorites %}active{% endif %}" data-product-id="{{ product.id }}">
+                                <i class="{% if product.id in favorites %}fas{% else %}far{% endif %} fa-heart"></i>
+                            </button>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>        
+
+            <div class="back-button">
+                <a href="{% url 'home' %}"><i class="fas fa-arrow-left"></i> Back to Home</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Fashion Recommender. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

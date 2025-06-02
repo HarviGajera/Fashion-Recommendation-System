@@ -1,0 +1,298 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>Fashion Recommender | My Profile</title>
+    <link rel="stylesheet" href="{% static 'css/favorites.css' %}">
+    <link rel="stylesheet" href="{% static 'css/results.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style1.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{% static "js/script.js" %}"></script>
+    <script src="{% static "js/favorites.js" %}"></script>
+    <script src="{% static 'js/profile.js' %}"></script>
+</head>
+
+<body>
+    <div class="nav">
+        <div class="nav-container">
+            <div class="nav-left">
+                <h2><i class="fas fa-tshirt"></i> Fashion Recommender</h2>
+            </div>
+            <div class="nav-right">
+                <div class="user-menu">
+                    <div class="user-welcome">
+                        <div class="user-icon" onclick="toggleDropdown()">
+                            {% if profile.profile_picture %}
+                                <img src="{{ profile.profile_picture.url }}" alt="{{ user.username }}">
+                            {% else %}
+                                <i class="fas fa-user"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu">
+                        <a href="{% url 'profile' %}" class="dropdown-item">
+                            <i class="fas fa-user-circle"></i> My Profile
+                        </a>
+                        <a href="{% url 'profile' %}#favorites" class="dropdown-item">
+                            <i class="fas fa-heart"></i> Favorites
+                        </a>
+                        <a href="{% url 'profile' %}#history" class="dropdown-item">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                        <a href="{% url 'settings' %}" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <a href="{% url 'logout' %}" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="success-message">
+                    <i class="fas fa-check-circle"></i>
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" alt="{{ user.username }}">
+                    {% else %}
+                        <div class="avatar-placeholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="profile-info">
+                    <h4>{{ user.username }}</h4>
+                    <p>{{ user.email }}</p>
+                    <button class="edit-profile-btn" onclick="openEditProfileModal()"><i class="fas fa-edit"></i> Edit Profile</button>
+                </div>
+            </div>
+
+            <div class="profile-tabs">
+                <button class="tab-btn active" onclick="openTab('favorites')">My Favorites</button>
+                <button class="tab-btn" onclick="openTab('history')">History</button>
+                <button class="tab-btn" onclick="openTab('settings')">Profile</button>
+            </div>
+
+            <div id="favorites" class="tab-content active">
+                <h2>My Favorite Items</h2>
+                {% if favorites %}
+                    <ul class="product-list">
+                        {% for product in favorites %}
+                            <li class="product-item" data-product-id="{{ product.id }}">
+                                <img src="{{ product.image.url }}" alt="{{ product.product_name }}">
+                                <h3>{{ product.product_name }}</h3>
+                                <div class="product-rating">
+                                    {{ product.rating|render_stars|safe }}
+                                </div> 
+                                <button class="add-to-favorites active" data-product-id="{{ product.id }}">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-heart-broken"></i>
+                        <p>You don't have any favorite items yet.</p>
+                        <a href="{% url 'home' %}" class="cta-button">Discover Fashion</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div id="history" class="tab-content">
+                <div class="history-header">
+                    <h2>Search History</h2>
+                    <form method="POST" action="{% url 'clear_history' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="clear-history-btn">Clear History</button>
+                    </form>
+                </div>                             
+
+                <div class="search-type-tabs">
+                    <button class="search-tab-btn active" onclick="toggleSearchType('image')">Image Searches</button>
+                    <button class="search-tab-btn" onclick="toggleSearchType('text')">Text Searches</button>
+                </div>
+                
+                <div id="text-searches" class="search-type-content">
+                    {% if text_history %}
+                        <ul class="product-list">
+                            {% for entry in text_history %}
+                                <li class="product-item">
+                                    <div class="text-input">
+                                        <h3>{{ entry.query }}</h3>
+                                    </div>
+                                    <div class="product-rating">
+                                        <small>{{ entry.timestamp|date:"M d, Y" }}</small>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="empty-state"><p>No text searches yet.</p></div>
+                    {% endif %}
+                </div>
+                
+                <div id="image-searches" class="search-type-content active">
+                    {% if image_history %}
+                        <ul class="product-list">
+                            {% for entry in image_history %}
+                                <li class="product-item">
+                                    <img src="{{ entry.image.url }}" alt="Search Image">
+                                    <div class="product-rating">
+                                        <small>{{ entry.timestamp|date:"M d, Y" }}</small>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="empty-state"><p>No image searches yet.</p></div>
+                    {% endif %}
+                </div>                
+            </div>            
+
+            <div id="settings" class="tab-content">
+                <div class="user-info-section">
+                    <div class="info-group">
+                        <h3>Personal Information</h3>
+                        <div class="info-item">
+                            <span class="info-label">Username:</span>
+                            <span class="info-value">{{ user.username }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value">{{ user.email }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Full Name:</span>
+                            <span class="info-value">
+                                {% if user.first_name or user.last_name %}
+                                    {{ user.first_name }} {{ user.last_name }}
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Age:</span>
+                            <span class="info-value">
+                                {% if profile.age %}
+                                    {{ profile.age }}
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-group">
+                        <h3>Profile Details</h3>
+                        <div class="info-item">
+                            <span class="info-label">Gender:</span>
+                            <span class="info-value">
+                                {% if profile.gender %}
+                                    {{ profile.gender }}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Bio:</span>
+                            <div class="bio-content">
+                                {% if profile.bio %}
+                                    {{ profile.bio }}
+                                {% else %}
+                                    No bio added yet.
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-button">
+        <a href="{% url 'home' %}"><i class="fas fa-arrow-left"></i> Back to Home</a>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeEditProfileModal()">&times;</span>
+                <h2 class="modal-title">Edit Profile</h2>
+            </div>
+            <form action="{% url 'edit_profile' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="profile-picture-upload">        
+                    <div class="profile-picture-preview">
+                        {% if profile.profile_picture %}
+                            <img id="profile-pic-preview" src="{{ profile.profile_picture.url }}" alt="Profile Picture">
+                        {% else %}
+                            <i class="fas fa-user" id="profile-pic-icon"></i>
+                            <img id="profile-pic-preview" src="" alt="" style="display: none;">
+                        {% endif %}
+                    </div>
+                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*" style="display: none;" onchange="previewImage(this)">
+                    <button type="button" id="file-upload-btn" onclick="document.getElementById('profile_picture').click()">
+                        Change Photo
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}">
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" value="{% if profile.age %}{{ profile.age }}{% elif age %}{{ age }}{% endif %}">
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="Male" {% if profile.gender == "Male" %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if profile.gender == "Female" %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if profile.gender == "Other" %}selected{% endif %}>Other</option>
+                        <option value="Prefer not to say" {% if profile.gender == "Prefer not to say" %}selected{% endif %}>Prefer not to say</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" name="bio" rows="4">{{ profile.bio }}</textarea>
+                </div>
+                <button type="submit" class="auth-button">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Fashion Recommender. All rights reserved.</p>
+    </footer>
+</body>
+</html>

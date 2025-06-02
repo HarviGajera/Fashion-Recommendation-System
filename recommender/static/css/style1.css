@@ -1,0 +1,321 @@
+:root {
+    --bg-color: #f8f9fa;
+    --text-color: #333;
+    --nav-gradient-start: #6e8efb;
+    --nav-gradient-end: #a777e3;
+    --nav-shadow: rgba(0, 0, 0, 0.1);
+    --user-icon-bg: #f0f0f0;
+    --user-icon-color: #666;
+    --dropdown-bg: #fff;
+    --dropdown-hover: #f8f9fa;
+    --dropdown-icon: #6e8efb;
+    --error-bg: #fdeaea;
+    --error-color: #e74c3c;
+    --success-bg: #e8f8f5;
+    --success-color: #2ecc71;
+    --button-gradient-start: #6e8efb;
+    --button-gradient-end: #a777e3;
+    --button-shadow: rgba(107, 142, 251, 0.4);
+    --button-hover-shadow: rgba(107, 142, 251, 0.6);
+    --footer-bg: #eee;
+    --footer-text: #3c3c3c;
+}
+
+body.dark-mode {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --nav-gradient-start: #3d3d3d;
+    --nav-gradient-end: #1a1a1a;
+    --nav-shadow: rgba(0, 0, 0, 0.15);
+    --user-icon-bg: #2c2c2c;
+    --user-icon-color: #aaa;
+    --dropdown-bg: #1e1e1e;
+    --dropdown-hover: #2a2a2a;
+    --dropdown-icon: #879dff;
+    --error-bg: #3c1e1e;
+    --error-color: #ff6b6b;
+    --success-bg: #1e3d36;
+    --success-color: #2ecc71;
+    --button-gradient-start: #5a67d8;
+    --button-gradient-end: #805ad5;
+    --button-shadow: rgba(90, 103, 216, 0.4);
+    --button-hover-shadow: rgba(90, 103, 216, 0.6);
+    --footer-bg: #1a1a1a;
+    --footer-text: #ccc;
+}
+
+/* Global Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    font-size: 16px;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 2000px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+}
+
+/* Navigation Bar */
+.nav {
+    background: linear-gradient(90deg, var(--nav-gradient-start), var(--nav-gradient-end));
+    color: white;
+    padding: 1.2rem 1.5rem;
+    box-shadow: 0 4px 20px var(--nav-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav h2 {
+    margin: 0;
+    font-size: 2rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+/* User Menu */
+.user-menu {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+}
+
+.user-welcome {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+}
+
+.user-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: var(--user-icon-bg);
+    color: var(--user-icon-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+.user-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-icon .fa-user {
+    font-size: 18px;
+}
+
+.user-welcome span {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 200px;
+    background: var(--dropdown-bg);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px var(--nav-shadow);
+    padding: 1rem 0;
+    margin-top: 0.6rem;
+    display: none;
+    z-index: 200;
+}
+
+.dropdown-menu.active {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.dropdown-item i {
+    margin-right: 0.8rem;
+    color: var(--dropdown-icon);
+}
+
+.dropdown-item:hover {
+    background-color: var(--dropdown-hover);
+}
+
+/* Error Message */
+.error {
+    color: var(--error-color);
+    background-color: var(--error-bg);
+    padding: 1rem;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 2rem auto;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Success Message */
+.success-message {
+    color: var(--success-color);
+    background-color: var(--success-bg);
+    padding: 1rem;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 2rem auto;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.success-message i {
+    margin-right: 0.6rem;
+}
+
+/* Back Button */
+.back-button {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.back-button a {
+    text-decoration: none;
+    color: white;
+    background: linear-gradient(135deg, var(--button-gradient-start), var(--button-gradient-end));
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 15px var(--button-shadow);
+}
+
+.back-button a:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px var(--button-hover-shadow);
+}
+
+/* Footer */
+footer {
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: 4rem;
+    font-size: 0.95rem;
+}
+
+
+
+
+
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .nav h2 {
+        font-size: 1.5rem;
+    }
+
+    .user-welcome span {
+        font-size: 1rem;
+    }
+
+    .container {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .nav h2 {
+        font-size: 1.4rem;
+    }
+
+    .user-menu {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .user-welcome {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    .dropdown-menu {
+        right: 0;
+        left: auto;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav h2 {
+        font-size: 1.2rem;
+        text-align: center;
+        width: 100%;
+    }
+
+    .user-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .user-welcome span {
+        font-size: 0.95rem;
+    }
+
+    .container {
+        padding: 1rem 0.5rem;
+    }
+
+    .dropdown-item {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+
+    footer {
+        padding: 1rem;
+        font-size: 0.85rem;
+    }
+}

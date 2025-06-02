@@ -1,0 +1,266 @@
+{% load static %}
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>Fashion Recommender | Settings</title>
+    <link rel="stylesheet" href="{% static 'css/style1.css' %}">
+    <link rel="stylesheet" href="{% static 'css/settings.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/settings.js' %}"></script>
+</head>
+
+<body>
+    <div class="nav">
+        <div class="nav-container">
+            <div class="nav-left">
+                <h2><i class="fas fa-t-shirt"></i> Fashion Recommender</h2>
+            </div>
+            
+            {% if user.is_authenticated %}
+            <div class="nav-right">
+                <div class="user-menu">
+                    <div class="user-welcome">
+                        <div class="user-icon" onclick="toggleDropdown()">
+                            {% if user.profile.profile_picture %}
+                                <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" class="profile-picture">
+                            {% else %}
+                                <div class="profile-picture-placeholder">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu">
+                        <a href="{% url 'profile' %}" class="dropdown-item">
+                            <i class="fas fa-user-circle"></i> My Profile
+                        </a>
+                        <a href="{% url 'profile' %}#favourites" class="dropdown-item">
+                            <i class="fas fa-heart"></i> Favorites
+                        </a>
+                        <a href="{% url 'profile' %}#history" class="dropdown-item">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                        <a href="{% url 'settings' %}" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <a href="{% url 'logout' %}" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="auth-links">
+                    <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="settings-container">
+        <div class="alerts">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% if error_message %}
+                <div class="alert alert-danger">
+                    {{ error_message }}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="settings-card">
+            <div class="settings-heading">
+                <i class="fas fa-cog"></i>
+                <h2>Account Settings</h2>
+            </div>
+            
+            <!-- Dark Mode Toggle -->
+            <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="dark-mode-toggle">
+                    <input type="checkbox" id="dark-mode-toggle" />
+                    <span class="slider"></span>
+                </label>
+                <span class="theme-switch-label">Dark Mode</span>
+            </div>
+            
+            <div class="settings-options">
+                <div class="settings-option" onclick="openUsernameModal()">
+                    <i class="fas fa-user-edit"></i>
+                    <div class="settings-option-text">
+                        <h3>Change Username</h3>
+                        <p>Update your current username to a new one</p>
+                    </div>
+                </div>
+                
+                <div class="settings-option" onclick="openPasswordModal()">
+                    <i class="fas fa-key"></i>
+                    <div class="settings-option-text">
+                        <h3>Change Password</h3>
+                        <p>Update your password for better security</p>
+                    </div>
+                </div>
+                
+                <div class="settings-option" onclick="openHelpCenter()">
+                    <i class="fas fa-question-circle"></i>
+                    <div class="settings-option-text">
+                        <h3>Help Center</h3>
+                        <p>Get help with using the Fashion Recommender</p>
+                    </div>
+                </div>
+                
+                <div class="settings-option" onclick="openAbout()">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="settings-option-text">
+                        <h3>About</h3>
+                        <p>Learn more about the Fashion Recommender app</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Username Change Modal -->
+    <div id="username-modal" class="modal form-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-user-edit"></i>
+                <h2>Change Username</h2>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'change_username' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="current_username">Current Username</label>
+                        <input type="text" id="current_username" class="form-control" value="{{ user.username }}" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new_username">New Username</label>
+                        <input type="text" id="new_username" name="new_username" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Confirm Password</label>
+                        <input type="password" id="password" name="password" class="form-control" required>
+                        <small>For security reasons, please enter your current password to confirm this change.</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="form-button" style="background-color: #6c757d; margin-right: 10px;" onclick="closeModal('username-modal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="submit" class="form-button" onclick="submitForm('username-modal')">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Password Change Modal -->
+    <div id="password-modal" class="modal form-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-key"></i>
+                <h2>Change Password</h2>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'change_password' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="current_password">Current Password</label>
+                        <input type="password" id="current_password" name="current_password" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new_password1">New Password</label>
+                        <input type="password" id="new_password1" name="new_password1" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new_password2">Confirm New Password</label>
+                        <input type="password" id="new_password2" name="new_password2" class="form-control" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="form-button" style="background-color: #6c757d; margin-right: 10px;" onclick="closeModal('password-modal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="submit" class="form-button" onclick="submitForm('password-modal')">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Help Center Modal -->
+    <div id="help-center-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-question-circle"></i>
+                <h2>Help Center</h2>
+            </div>
+            <div class="modal-body">
+                <h3>Frequently Asked Questions</h3>
+                <p><strong>How does the Fashion Recommender work?</strong><br>
+                Our app analyzes your preferences, past selections, and current fashion trends to provide personalized clothing recommendations.</p>
+                
+                <p><strong>How can I save my favorite recommendations?</strong><br>
+                Click the heart icon on any clothing item to add it to your favorites. You can view all your favorites in your profile.</p>
+                
+                <p><strong>Can I change my preferences?</strong><br>
+                Yes! You can update your style preferences at any time from your profile page.</p>
+                
+                <h3>Need More Help?</h3>
+                <p>If you can't find answers to your questions here, please contact our support team at <a href="mailto:support@fashionrecommender.com">support@fashionrecommender.com</a>.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="form-button" onclick="closeModal('help-center-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- About Modal -->
+    <div id="about-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-info-circle"></i>
+                <h2>About Fashion Recommender</h2>
+            </div>
+            <div class="modal-body">
+                <p>Fashion Recommender is an AI-powered platform designed to help you discover clothing that matches your personal style. Our advanced algorithms analyze your preferences and provide tailored fashion recommendations.</p>
+                
+                <p>Version: 2.1.0</p>
+                <p>Released: April 2025</p>
+                
+                <h3>Our Mission</h3>
+                <p>We believe that everyone deserves to look and feel their best. Our mission is to make fashion accessible and enjoyable for all by providing personalized recommendations that match your unique style.</p>
+                
+                <h3>The Team</h3>
+                <p>Fashion Recommender was created by a team of fashion enthusiasts and tech experts who wanted to bridge the gap between technology and personal style.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="form-button" onclick="closeModal('about-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-button">
+        <a href="{% url 'profile' %}"><i class="fas fa-arrow-left"></i> Back to Profile</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Fashion Recommender. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

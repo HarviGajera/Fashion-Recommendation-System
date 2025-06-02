@@ -1,0 +1,111 @@
+/* Favorites Button Styling */
+.add-to-favorites {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 36px;
+    height: 36px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ccc;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.add-to-favorites:hover,
+.add-to-favorites:focus {
+    transform: scale(1.1);
+    outline: none;
+}
+
+.add-to-favorites.active {
+    color: #ff4081;
+}
+
+.add-to-favorites.active i {
+    color: #ff4081;
+}
+
+.add-to-favorites i {
+    transition: all 0.3s ease;
+}
+
+/* Notification Styles */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    z-index: 1000;
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Success Message */
+.success-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #e8f5e9;
+    border-left: 4px solid #4caf50;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.success-message i {
+    color: #4caf50;
+    font-size: 1.2rem;
+}
+
+/* Remove button in favorites section */
+.remove-favorite {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    width: 36px;
+    height: 36px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff4081;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.remove-favorite:hover {
+    background-color: #ff4081;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Animation for success message */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
