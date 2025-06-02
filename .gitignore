@@ -9,4 +9,8 @@ db.sqlite3
 *.log
 *.bak
 venv/
+myenv/
+Dockerfile
+.dockerignore
+docker-compose.yml
 *.DS_Store

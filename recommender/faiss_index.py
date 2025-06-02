@@ -200,73 +200,6 @@ def load_faiss_indices():
         traceback.print_exc()
         return None, None, None
         
-# def search_similar_items(query_embedding, index, k=5):
-#     """Search for similar items in the FAISS index with improved error handling"""
-#     try:
-#         # Validate embedding
-#         if query_embedding is None:
-#             logger.error("Query embedding is None")
-#             return None
-            
-#         if not isinstance(query_embedding, np.ndarray):
-#             logger.error(f"Query embedding is not a numpy array: {type(query_embedding)}")
-#             try:
-#                 query_embedding = np.array(query_embedding, dtype=np.float32)
-#             except:
-#                 return None
-        
-#         # Get the index dimension
-#         index_dim = index.d
-#         embedding_dim = query_embedding.shape[0]
-        
-#         # Check if dimensions match
-#         if embedding_dim != index_dim:
-#             logger.error(f"Embedding dimension mismatch: query is {embedding_dim}, index expects {index_dim}")
-#             return None
-            
-#         # Ensure embedding is normalized for cosine similarity
-#         norm = np.linalg.norm(query_embedding)
-#         if norm > 0:
-#             query_embedding = query_embedding / norm
-            
-#         # Reshape to (1, D) where D is embedding dimension
-#         query_embedding = query_embedding.reshape(1, -1).astype('float32')
-        
-#         # Search the index
-#         D, I = index.search(query_embedding, k)
-        
-#         # Load product IDs
-#         try:
-#             product_ids = np.load(PRODUCT_IDS_PATH)
-#         except Exception as e:
-#             logger.error(f"Error loading product IDs: {e}")
-#             return None
-        
-#         # Check if indices are valid
-#         if I is None or I.size == 0:
-#             logger.error("Search returned no results")
-#             return None
-            
-#         if np.max(I) >= len(product_ids):
-#             logger.error(f"Search returned invalid indices: max {np.max(I)}, product_ids length {len(product_ids)}")
-#             return None
-        
-#         # Map indices to product IDs
-#         result_ids = product_ids[I[0]]
-        
-#         return result_ids
-        
-#     except Exception as e:
-#         logger.error(f"Error searching FAISS index: {e}")
-#         traceback.print_exc()
-#         return None
-
-
-
-
-
-
-
 def search_similar_items(query_embedding, index, k=5, max_results=10):
     """
     Search for similar items in the FAISS index with improved deduplication
@@ -311,7 +244,6 @@ def search_similar_items(query_embedding, index, k=5, max_results=10):
         query_embedding = query_embedding.reshape(1, -1).astype('float32')
         
         # Search the index with more results than needed to handle duplicates
-        # We fetch more results than k to have extras for deduplication
         D, I = index.search(query_embedding, max_results)
         
         # Load product IDs
