@@ -14,3 +14,10 @@ Dockerfile
 .dockerignore
 docker-compose.yml
 *.DS_Store
+
+# Ignore large or generated files
+*.csv
+*.faiss
+*.h5
+*.npy
+*.zip
